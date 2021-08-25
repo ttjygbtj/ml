@@ -1,16 +1,46 @@
-# This is a sample Python script.
+import os
+import random
+import shutil
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+from skimage import io
+from sklearn.cluster import KMeans
+from sklearn.metrics import mean_squared_error
+import numpy as np
+
+lst = random.sample(range(1, 1001), 5)
+lst.sort()
+files = list(map(lambda d: "%06d.jpg" % d, lst))
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def compress(ratios, files, random_states=['random']):
+    """
+    压缩图片,返回每个压缩比下的平均mse,反应压缩性能
+    :param ratios:
+    :param files:
+    :param random_state:
+    :return:
+    """
+    mses=[]
+    for ratio in ratios:
+        for random_state in random_states:
+            mse=0
+            save_path = os.path.join('result', random_state, "%d"%ratio)
+            if os.path.exists(save_path):
+                shutil.rmtree(save_path)
+            os.makedirs(save_path)
+            for file in files:
+                I = io.imread(os.path.join('data', file))
+                io.imshow(I)
+                kmeans = KMeans(n_clusters=ratio, random_state=random_state)
+                kmeans.fit(I.reshape(-1, 3))
+                O = np.array(kmeans.cluster_centers_[kmeans.labels_], dtype='uint8').reshape(I.shape)
+                io.imsave(os.path.join(save_path, "%s_%s"%(ratio, file)), O)
+                mse+=mean_squared_error(I.reshape(-1, 3), O.reshape(-1, 3))
+                io.imshow(O)
+                io.show()
+            mses.append(mse)
+    return mses
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+ret = compress([8, 16, 32, 64, 128], files, ['random', ''])
+print(ret)
