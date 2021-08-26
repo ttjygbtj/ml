@@ -15,15 +15,15 @@ files = list(map(lambda d: "%06d.jpg" % d, lst))
 
 def size_format(size):
     if size < 1e3:
-        return '%lfB' % size
+        return '%.1fB' % size
     elif size < 1e6:
-        return '%lfKB' % (size / 1e6)
+        return '%.1fKB' % (size / 1e3)
     elif size < 1e9:
-        return '%lfMB' % (size / 1e9)
+        return '%.1fMB' % (size / 1e6)
     elif size < 1e12:
-        return '%lfGB' % (size / 1e12)
+        return '%.1fGB' % (size / 1e9)
     elif size < 1e15:
-        return '%lfTB' % (size / 1e15)
+        return '%.1fTB' % (size / 1e12)
 
 
 def mykmeans(ratios, files, KMeanses, names):
