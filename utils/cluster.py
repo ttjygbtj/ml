@@ -4,7 +4,7 @@ from skimage.metrics import mean_squared_error
 
 
 class lcKMeans():
-    def __init__(self, n_clusters, init='r', max_iter=300):
+    def __init__(self, n_clusters, init='r', max_iter=1):
 
         self.n_clusters = n_clusters
         self.init = init
@@ -16,9 +16,9 @@ class lcKMeans():
         elif self.init == 'l':
             idxes = np.linspace(0, len(X) - 1, self.n_clusters, dtype='int')
         U = X[idxes]
-        C = [[u] for u in U]
         for i in range(self.max_iter):
             C = [[u] for u in U]
+            self.labels_ = []
             for x in X:
                 md = mean_squared_error(x, U[0])
                 mc = 0
@@ -28,6 +28,8 @@ class lcKMeans():
                         md = d
                         mc = i
                 C[mc].append(x)
+                self.labels_.append(mc)
             for i in range(self.n_clusters):
                 U[i] = np.mean(np.array(C[i]))
-        return C
+        self.labels_ = np.array(self.labels_)
+        self.cluster_centers_ = np.array(U)
