@@ -79,7 +79,7 @@ def compress_data(ratios, files, func):
             ws_compression_ratio.write(0, ratios.index(ratio) + 1, ratio)
             mse = 0
             compression_ratio = 0
-            save_path = os.path.join(save_path, "%d" % ratio)
+            save_path = os.path.join('result', name, "%d" % ratio)
             os.makedirs(save_path)
             for file in files:
                 I_path = os.path.join('data', file)
