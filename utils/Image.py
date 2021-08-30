@@ -6,7 +6,7 @@ import numpy as np
 from skimage import io
 from skimage.metrics import mean_squared_error
 from xlwt import Workbook
-
+import xlrd
 
 def size_format(size):
     if size < 1e3:
