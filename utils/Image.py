@@ -4,9 +4,11 @@ import shutil
 
 import numpy as np
 from skimage import io
+
 from skimage.metrics import mean_squared_error
 from xlwt import Workbook
 import xlrd
+
 
 def size_format(size):
     if size < 1e3:
@@ -44,11 +46,37 @@ def compress_image(ratios, files, func):
                 kmeans.fit(I.reshape(-1, 3))
                 O = np.array(kmeans.cluster_centers_[kmeans.labels_], dtype='uint8').reshape(I.shape)
                 Os = np.concatenate((Os, O), axis=1)
-            high = int(math.sqrt(len(ratios) + 1))
-            unit = I.shape[1] * high
-            Os_ = Os[:, :unit].copy()
-            for i in range(high - 1):
-                Os_ = np.vstack((Os_, Os[:, (i + 1) * unit:(i + 2) * unit]))
+            num = len(ratios) + 1
+            n = int(math.sqrt(num))
+            W = I.shape[1]  # 一张图的宽度
+            if num == n * n:
+                w = n
+                h = n
+                Os_ = Os[:, :w * W].copy()
+                for i in range(h - 1):
+                    Os_ = np.vstack((Os_, Os[:, (i + 1) * w * W:(i + 2) * w * W]))
+            elif num == n * (n + 1):
+                w = n + 1
+                h = n
+                Os_ = Os[:, :w * W].copy()
+                for i in range(h - 1):
+                    Os_ = np.vstack((Os_, Os[:, (i + 1) * w * W:(i + 2) * w * W]))
+            elif num < n * (n + 1):
+                w = n + 1
+                h = num // w
+                Os_ = Os[:, :w * W].copy()
+                for i in range(h - 1):
+                    Os_ = np.vstack((Os_, Os[:, (i + 1) * w * W:(i + 2) * w * W]))
+                Os_ = np.vstack((Os_, np.hstack(
+                    (Os[:, (h * w) * W:], np.zeros((Os.shape[0], (n * (n + 1) - num) * W, Os.shape[2]))))))
+            else:
+                w = n + 1
+                h = n
+                Os_ = Os[:, :w * W].copy()
+                for i in range(h - 1):
+                    Os_ = np.vstack((Os_, Os[:, (i + 1) * w * W:(i + 2) * w * W]))
+                Os_ = np.vstack((Os_, np.hstack(
+                    (Os[:, (h * w) * W:], np.zeros((Os.shape[0], ((n + 1) * (n + 1) - num) * W, Os.shape[2]))))))
             Os_path = os.path.join(save_path, file)
             io.imsave(Os_path, Os_)
             io.imshow(Os_)
@@ -87,7 +115,7 @@ def compress_data(ratios, files, func):
                 kmeans = KMeans(n_clusters=ratio, **args)
                 kmeans.fit(I.reshape(-1, 3))
                 O = np.array(kmeans.cluster_centers_[kmeans.labels_], dtype='uint8').reshape(I.shape)
-                O_path = os.path.join(save_path, "%s_%s" % (ratio, file))
+                O_path = os.path.join(save_path, "%s_%s.png" % (ratio, file))
                 io.imsave(O_path, O)
                 mse_ = mean_squared_error(I.reshape(-1, 3), O.reshape(-1, 3))
                 mse += mse_

@@ -34,9 +34,11 @@ class lcKMeans():
                 C[mc].append(x)
                 self.labels_.append(mc)
             for i in range(self.n_clusters):
-                U[i] = np.mean(np.array(C[i]))
+                U[i] = np.mean(np.array(C[i]), axis=0)
             if (old_U == U).all():
                 break
             old_U = U
         self.labels_ = np.array(self.labels_)
-        self.cluster_centers_ = np.array(U * 255)
+        # print(self.labels_.shape)
+        # tmp = self.labels_.reshape((self.labels_.shape[0] // 3, 3))
+        self.cluster_centers_ = np.array(U * 255, dtype='uint8')

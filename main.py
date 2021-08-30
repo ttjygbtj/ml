@@ -11,11 +11,11 @@ files = list(map(lambda d: "%06d.jpg" % d, lst))
 
 
 def main():
-    ratios = np.linspace(1, 16, 8, dtype='int').tolist()
+    ratios = np.linspace(8, 16, 3, dtype='int').tolist()
     # ratios = [1, 8, 16]
     func = [
-        # [lcKMeans, 'lcKmeans', {'init': 'r', 'max_iter': 10}]
-        [KMeans, 'sklearn', {}]
+        [lcKMeans, 'lcKmeans', {'init': 'r', 'max_iter': 10}]
+        # [KMeans, 'sklearn', {}]
     ]
     compress_data(ratios, files, func)
     # compress_data([2, 4, 8, 16, 32, 64, 128, 256], files, [KMeans], ['sklearn'])
