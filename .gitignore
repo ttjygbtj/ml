@@ -1,4 +1,3 @@
-./data
-./result
-lcKmeans.xls
+kmeans/data
+kmeans/result
 sklearn.xls
