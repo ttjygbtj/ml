@@ -23,11 +23,12 @@ if False:
 
 if True:
 # if False:
-    pca = PCA(3)
+    pca = PCA()
     img = io.imread(source_image_path)
     pca.fit(img)
-    cov_matritx = pca.get_covariance()
-    lambda_EA = np.linalg.eigvals(cov_matritx)
-    # print(lambda_EA)
-    # io.imshow(lambda_EA)
-    # io.show()
+    engine = pca.components_
+    io.imshow(img, cmap='bone')
+    io.show()
+    print(engine.shape)
+    io.imshow(engine, cmap='bone')
+    io.show()
