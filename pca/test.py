@@ -3,6 +3,7 @@ from pca.utils.dataloader import read, get_face
 from sklearn.decomposition import PCA
 from pca.config.path import data_path, source_image_path, source_data_path
 from skimage import io
+import numpy as np
 # 特征脸
 # 2D
 
@@ -24,7 +25,9 @@ if True:
 # if False:
     pca = PCA(3)
     img = io.imread(source_image_path)
-    model = pca.fit(img)
-    result = pca.fit_transform(img)
-    io.imshow(result)
-    io.show()
+    pca.fit(img)
+    cov_matritx = pca.get_covariance()
+    lambda_EA = np.linalg.eigvals(cov_matritx)
+    # print(lambda_EA)
+    # io.imshow(lambda_EA)
+    # io.show()
