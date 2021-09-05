@@ -138,4 +138,4 @@ def compress_data(ratios, files, func):
                                        size_format(os.path.getsize(I_path)))
         ws_mse.write(len(files) + 1, 0, 'avg')
         ws_compression_ratio.write(len(files) + 1, 0, 'avg')
-        wb.save("%s.xls" % name)
+        wb.save(os.path.join(os.path.dirname(__file__), '..', "%s.xls" % name))
